@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+
+# API
+
+  coinpanion.api:
+    container_name: coinpanion.api
+    image: ${DOCKER_REGISTRY-}backendchallange
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+        - '5000:80'
+    restart: on-failure
+    depends_on:
+      - timescale
+
+# DATABASE
+
+  timescale:
+    container_name: timescale
+    image: timescale/timescaledb:latest-pg12
+    environment:
+      - POSTGRES_USER=User
+      - POSTGRES_PASSWORD=Pass
+    ports:
+      - 5432:5432
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+    timescale_data:
